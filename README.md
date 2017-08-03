@@ -1,26 +1,34 @@
-# polyfill
+# @ember-intl/polyfill
 
-This README outlines the details of collaborating on this Ember addon.
+Automatically writes the [Intl.js polyfill][] to `<dist>/assets/intl/`.
 
-## Installation
+Using the polyfill is not required when targeting a modern set of browsers which natively implement the Intl API.
 
-* `git clone <repository-url>` this repository
-* `cd polyfill`
-* `npm install`
+## Automatically inject script tags
 
-## Running
+```js
+// config/ember-intl.js
+module.exports = function(/* environment */) {
+  autoPolyfill: true
+};
+```
 
-* `ember serve`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
+## Manually register Intl polyfill & data
 
-## Running Tests
+Add the following tags to your `index.html`, or any mechanism in which you serve
+your your application payload.  Note: these script tags should be set above
+the application's script tag.
 
-* `npm test` (Runs `ember try:each` to test your addon against multiple Ember versions)
-* `ember test`
-* `ember test --server`
+```html
+<script src="{{rootURL}}assets/intl/intl.min.js"></script>
+<script src="{{rootURL}}assets/intl/locales/en-us.js"></script>
+<script src="{{rootURL}}assets/intl/locales/fr-fr.js"></script>
+<script src="{{rootURL}}assets/intl/locales/es-es.js"></script>
+<!--
+You can view the full list of CLDR locales which can be accessed from the `/assets/intl` folder
+of your application.  The CLDRs are automatically placed there at build time.  Typically this folder
+on your filesystem is ``<project>/dist/assets/intl`
 
-## Building
-
-* `ember build`
-
-For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).
+Full list: https://github.com/yahoo/formatjs-extract-cldr-data/tree/master/data/main
+-->
+```
