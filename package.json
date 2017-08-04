@@ -6,12 +6,16 @@
     "ember-addon"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "jason.mitchell.w@gmail.com",
   "directories": {
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/ember-intl/polyfill.git"
+  },
+  "homepage": "https://github.com/ember-intl/polyfill",
   "scripts": {
     "build": "ember build",
     "start": "ember server",
@@ -22,7 +26,7 @@
     "broccoli-merge-trees": "^2.0.0",
     "broccoli-source": "^1.1.0",
     "ember-cli-babel": "^6.3.0",
-    "intl": "1.0.1",
+    "intl": "^1.2.5",
     "lodash.get": "^4.4.2"
   },
   "devDependencies": {
