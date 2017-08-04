@@ -86,14 +86,14 @@ module.exports = {
     trees.push(
       funnel(tree, {
         srcDir: 'dist',
-        files: ['Intl.js.map'],
+        include: ['*.map'],
         destDir: this.assetPath
       })
     );
 
     let polyfillTree = funnel(tree, {
       srcDir: 'dist',
-      files: ['Intl.complete.js', 'Intl.js', 'Intl.js.map', 'Intl.min.js', 'Intl.min.js.map'],
+      include: ['*.js'],
       destDir: this.assetPath
     });
 
