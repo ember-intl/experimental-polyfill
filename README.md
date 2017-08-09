@@ -1,6 +1,6 @@
 # @ember-intl/polyfill
 
-Automatically writes the [Intl.js polyfill][] to `<dist>/assets/intl/`.
+Automatically writes the Intl.js polyfill to `<dist>/assets/intl/`.
 
 Using the polyfill is not required when targeting a modern set of browsers which natively implement the Intl API.
 
