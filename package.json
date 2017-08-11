@@ -26,6 +26,8 @@
     "broccoli-merge-trees": "^2.0.0",
     "broccoli-source": "^1.1.0",
     "ember-cli-babel": "^6.3.0",
+    "ember-cli-import-polyfill": "^0.2.0",
+    "exists-sync": "^0.0.4",
     "intl": "^1.2.5",
     "lodash.get": "^4.4.2"
   },
