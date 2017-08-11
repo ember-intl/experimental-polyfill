@@ -22,7 +22,6 @@ module.exports = {
 
   included(app) {
     this._super.included.apply(this, arguments);
-
     let host = (this.app = this._findHost());
     this._isHost = app === host;
     this._addonConfig = this.getConfig(host.env);
@@ -33,7 +32,7 @@ module.exports = {
   },
 
   getConfig(env) {
-    let configPath = path.join(this.app.project.root, 'config', 'ember-intl.js');
+    let configPath = path.join(this.project.configPath(), '..', 'ember-intl.js');
     let config = {};
 
     if (existsSync(configPath)) {
@@ -60,19 +59,21 @@ module.exports = {
   },
 
   contentFor(name, config) {
-    if (name === 'head' && !get(this, '_addonConfig.disablePolyfill') && get(this, '_addonConfig.autoPolyfill')) {
+    let addonConfig = this._addonConfig;
+
+    if (name === 'head' && !addonConfig.disablePolyfill && addonConfig.autoPolyfill) {
       let prefix = '';
 
       if (config.rootURL) {
         prefix += config.rootURL;
       }
 
-      if (this._addonConfig.assetPath) {
-        prefix += this._addonConfig.assetPath;
+      if (addonConfig.assetPath) {
+        prefix += addonConfig.assetPath;
       }
 
       if (get(this, '_addonConfig.locales.length') > 0) {
-        let scripts = this._addonConfig.locales.map(locale => `<script src="${prefix}/locales/${locale}.js"></script>`);
+        let scripts = addonConfig.locales.map(locale => `<script src="${prefix}/locales/${locale}.js"></script>`);
 
         return [`<script src="${prefix}/intl.min.js"></script>`].concat(scripts).join('\n');
       }
@@ -82,14 +83,16 @@ module.exports = {
   },
 
   treeForPublic() {
-    if (get(this, '_addonConfig.disablePolyfill')) {
+    let addonConfig = this._addonConfig;
+
+    if (addonConfig.disablePolyfill) {
       return;
     }
 
     let nodeModulePath;
 
     try {
-      /* if project has intl as a dependency, their dependency takes priority */
+      /* project with intl as a dependency takes priority */
       let resolve = require('resolve');
       nodeModulePath = resolve.sync('intl', { basedir: this.app.project.root });
     } catch(_) {
@@ -112,23 +115,23 @@ module.exports = {
       funnel(tree, {
         srcDir: 'dist',
         include: ['*.map'],
-        destDir: this._addonConfig.assetPath
+        destDir: addonConfig.assetPath
       })
     );
 
     let polyfillTree = funnel(tree, {
       srcDir: 'dist',
       include: ['*.js'],
-      destDir: this._addonConfig.assetPath
+      destDir: addonConfig.assetPath
     });
 
     let localeFunnel = {
       srcDir: 'locale-data/jsonp',
-      destDir: `${this._addonConfig.assetPath}/locales`
+      destDir: `${addonConfig.assetPath}/locales`
     };
 
-    if (get(this, '_addonConfig.locales.length' > 0)) {
-      localeFunnel.include = this._addonConfig.locales.map(locale => new RegExp(`^${locale}.js$`, 'i'));
+    if (get(this, '_addonConfig.locales.length') > 0) {
+      localeFunnel.include = addonConfig.locales.map(locale => new RegExp(`^${locale}.js$`, 'i'));
     }
 
     let localesTree = funnel(tree, localeFunnel);
