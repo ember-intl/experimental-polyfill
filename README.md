@@ -1,7 +1,5 @@
 # @ember-intl/polyfill
 
-*NOTE: currently cannot be used outside of ember-intl*
-
 Automatically writes the [Intl.js polyfill](https://github.com/andyearnshaw/Intl.js/) to `assets/intl/` and optionally will insert script polyfill script tags into `index.html` at build time.
 
 Using the polyfill is not required when targeting a modern set of browsers which natively implement the Intl API.
