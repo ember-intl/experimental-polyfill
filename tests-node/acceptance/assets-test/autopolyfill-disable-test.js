@@ -11,7 +11,7 @@ const AddonTestApp = require('ember-cli-addon-tests').AddonTestApp;
 const { describe, before, after, it } = mocha;
 
 describe('autopolyfill-disable acceptance', function() {
-  this.timeout(300000);
+  this.timeout(0);
 
   before(function() {
     let app = this.app = new AddonTestApp();
