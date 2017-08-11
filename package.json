@@ -21,7 +21,7 @@
   "scripts": {
     "build": "ember build",
     "start": "ember server",
-    "test": "yarn test:node && yarn test:fe",
+    "test": "yarn test:node",
     "test:fe": "ember try:each",
     "test:node": "./node_modules/mocha/bin/mocha tests-node/**/*-test.*",
     "test:node:watch": "./node_modules/mocha/bin/mocha -w tests-node/**/*-test.*"
