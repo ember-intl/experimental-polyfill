@@ -60,7 +60,7 @@ module.exports = {
   },
 
   contentFor(name, config) {
-    if (name === 'head' && !this._addonConfig.disablePolyfill && this._addonConfig.autoPolyfill) {
+    if (name === 'head' && !get(this, '_addonConfig.disablePolyfill') && get(this, '_addonConfig.autoPolyfill')) {
       let prefix = '';
 
       if (config.rootURL) {
@@ -82,6 +82,10 @@ module.exports = {
   },
 
   treeForPublic() {
+    if (get(this, '_addonConfig.disablePolyfill')) {
+      return;
+    }
+
     let nodeModulePath;
 
     try {
