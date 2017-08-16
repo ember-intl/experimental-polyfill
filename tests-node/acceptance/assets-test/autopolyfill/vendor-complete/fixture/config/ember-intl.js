@@ -25,15 +25,9 @@ module.exports = function(/* env */) {
     * @type {Boolean}
     * @default "false"
     */
-    autoPolyfill: true,
-
-    /**
-    * disablePolyfill prevents the polyfill from being bundled in the asset folder of the build
-    *
-    * @property disablePolyfill
-    * @type {Boolean}
-    * @default "false"
-    */
-    disablePolyfill: true
+    autoPolyfill: {
+      complete: true,
+      vendor: true
+    }
   };
 };

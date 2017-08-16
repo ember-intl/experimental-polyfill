@@ -13,7 +13,7 @@ module.exports = function(/* env */) {
     *
     * @property locales
     * @type {Array}
-    * @default []
+    * @default "[]"
     */
     locales: ['en-us', 'fr-fr'],
 
@@ -23,28 +23,11 @@ module.exports = function(/* env */) {
     *
     * @property autoPolyfill
     * @type {Boolean}
-    * @default false
+    * @default "false"
     */
     autoPolyfill: {
-       vendor: true
-    },
-
-    /**
-    * disablePolyfill prevents the polyfill from being bundled in the asset folder of the build
-    *
-    * @property disablePolyfill
-    * @type {Boolean}
-    * @default false
-    */
-    disablePolyfill: false,
-
-    /**
-     * When set, polyfill will overwrite the Intl global
-     *
-     * @property forcePolyfill
-     * @type {Boolean}
-     * @default false
-     */
-    forcePolyfill: true
+      complete: true,
+      vendor: false
+    }
   };
 };

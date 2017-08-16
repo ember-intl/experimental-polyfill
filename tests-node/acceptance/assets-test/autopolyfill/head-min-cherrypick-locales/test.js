@@ -3,22 +3,21 @@
 
 const mocha = require('mocha');
 const { expect } = require('chai');
-const denodeify = require('denodeify');
-const request = denodeify(require('request'));
-const debug = require('debug')('assets-test:cherry-pick');
+const request = require('denodeify')((require('request')));
 const AddonTestApp = require('ember-cli-addon-tests').AddonTestApp;
+const debug = require('debug')('assets-test:autopolyfill:head-min-cherrypick-locales');
 
 const { describe, before, after, it } = mocha;
 
-describe('cherry-pick assets acceptance', function() {
-  this.timeout(0);
+describe('autopolyfill/head-min-cherrypick-locales acceptance', function() {
+  this.timeout(400000);
 
   before(function() {
     let app = this.app = new AddonTestApp();
 
     return app
-      .create('cherry-pick', {
-        fixturesPath: 'tests-node/fixtures'
+      .create('fixture', {
+        fixturesPath: 'tests-node/acceptance/assets-test/autopolyfill/head-min-cherrypick-locales/'
       })
       .then(() => debug('asset path %s', app.path))
       .then(() => app.startServer());
@@ -63,6 +62,13 @@ describe('cherry-pick assets acceptance', function() {
   it('assets/intl/en-ca.js should 404', function() {
     return request('http://localhost:49741/assets/intl/en-ca.js').then(res => {
       expect(res.statusCode).to.equal(404);
+    });
+  });
+
+  it('assets/vendor.js should not contain intl polyfill', function() {
+    return request(`http://localhost:49741/assets/vendor.js`).then(res => {
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.includes('IntlPolyfill')).to.equal(false);
     });
   });
 });

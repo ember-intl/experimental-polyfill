@@ -3,22 +3,21 @@
 
 const mocha = require('mocha');
 const { expect } = require('chai');
-const denodeify = require('denodeify');
-const request = denodeify(require('request'));
-const debug = require('debug')('assets-test:autopolyfill-disable');
+const debug = require('debug')('assets-test:disable');
+const request = require('denodeify')((require('request')));
 const AddonTestApp = require('ember-cli-addon-tests').AddonTestApp;
 
 const { describe, before, after, it } = mocha;
 
 describe('disable acceptance', function() {
-  this.timeout(0);
+  this.timeout(400000);
 
   before(function() {
     let app = this.app = new AddonTestApp();
 
     return app
-      .create('disable', {
-        fixturesPath: 'tests-node/fixtures'
+      .create('fixture', {
+        fixturesPath: 'tests-node/acceptance/assets-test/disable'
       })
       .then(() => debug('asset path %s', app.path))
       .then(() => app.startServer());
@@ -55,5 +54,12 @@ describe('disable acceptance', function() {
         expect(res.statusCode).to.equal(404);
       });
     }));
+  });
+
+  it('assets/vendor.js should not contain intl polyfill', function() {
+    return request(`http://localhost:49741/assets/vendor.js`).then(res => {
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.includes('IntlPolyfill')).to.equal(false);
+    });
   });
 });
