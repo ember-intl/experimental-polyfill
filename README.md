@@ -76,13 +76,13 @@ module.exports = function(/* env */) {
 
 ## Force polyfill
 
-Since locale-data can vary between browser vendors & versions, you may want to override the `Intl` object with the polyfill to improve consistency.
+Since locale-data can vary between browser vendors & versions, you may want to override the `global.Intl` object with the polyfill to improve consistency.  This replaces the `global.Intl.{DateTimeFormat,NumberFormat}` constructors with `global.IntlPolyfill.{DateTimeFormat,NumberFormat}`
 
 ```js
 /* <project-root>/config/ember-intl.js */
 module.exports = function(/* env */) {
   locales: ['en-us'],
-  forcePolyfill: true, /* adds Intl.min and en-us locale data script tags to index.html head */
+  forcePolyfill: true,
   autoPolyfill: {
     vendor: true
   }
