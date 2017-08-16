@@ -14,7 +14,12 @@ Using the polyfill is not required when targeting a modern set of browsers which
 
 ## Options
 * `autoPolyfill` (default: `false`)
-automatically includes javascript `script` tags into the head of index.html
+  * automatically includes javascript `script` tags into the head of index.html
+  * optionally supports vendoring/bundling the Intl Polyfill and certain Intl Polyfill locale-data within vendor.js
+
+* `forcePolyfill` (default: `false`)
+overrides `global.Intl.{NumberFormat,DateTimeFormat}` with `IntlPolyfill.{NumberFormat,DateTimeFormat}`
+NOTE: if you are not vendoring the Intl polyfill, you must ensure the Intl polyfill is loaded before the `vendor.js` script tag.
 
 * `disablePolyfill` (default: `false`)
 disables addon
