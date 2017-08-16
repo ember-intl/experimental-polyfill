@@ -3,22 +3,21 @@
 
 const mocha = require('mocha');
 const { expect } = require('chai');
-const denodeify = require('denodeify');
-const request = denodeify(require('request'));
+const request = require('denodeify')((require('request')));
 const debug = require('debug')('assets-test:autopolyfill-disable');
 const AddonTestApp = require('ember-cli-addon-tests').AddonTestApp;
 
 const { describe, before, after, it } = mocha;
 
-describe('autopolyfill-disable acceptance', function() {
-  this.timeout(0);
+describe('autopolyfill/disable acceptance', function() {
+  this.timeout(400000);
 
   before(function() {
     let app = this.app = new AddonTestApp();
 
     return app
-      .create('autopolyfill-disable', {
-        fixturesPath: 'tests-node/fixtures'
+      .create('fixture', {
+        fixturesPath: 'tests-node/acceptance/assets-test/autopolyfill/disable/'
       })
       .then(() => debug('asset path %s', app.path))
       .then(() => app.startServer());
@@ -50,7 +49,7 @@ describe('autopolyfill-disable acceptance', function() {
     });
   });
 
-  it('assets/intl/{en-us,fr-fr}.js  should 200', function() {
+  it('assets/intl/{en-us,fr-fr}.js should 200', function() {
     return Promise.all(['en-us', 'fr-fr'].map(locale => {
       return request(`http://localhost:49741/assets/intl/locales/${locale}.js`).then(res => {
         expect(res.statusCode).to.equal(200);

@@ -41,8 +41,31 @@ module.exports = app;
 /* <project-root>/config/ember-intl.js */
 module.exports = function(/* env */) {
   locales: ['en-us'],
-  disablePolyfill: false,
-  autoPolyfill: true
+  autoPolyfill: true /* adds Intl.min and en-us locale data script tags to index.html head */
+};
+```
+
+## Vendor polyfill into vendor.js
+
+```js
+/* <project-root>/config/ember-intl.js */
+module.exports = function(/* env */) {
+  locales: ['en-us'],
+  autoPolyfill: {
+    vendor: true,
+    complete: true /* vendors *complete* Intl polyfill */
+  }
+};
+```
+
+```js
+/* <project-root>/config/ember-intl.js */
+module.exports = function(/* env */) {
+  locales: ['en-us'],
+  autoPolyfill: {
+    vendor: true, /* vendors Intl polyfill without locale data */
+    locales: ['en-us'] /* vendors only en-us locale */
+  }
 };
 ```
 
