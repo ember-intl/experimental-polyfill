@@ -69,7 +69,22 @@ module.exports = function(/* env */) {
 };
 ```
 
-## Manually register Intl polyfill & data
+## Force polyfill
+
+Since locale-data can vary between browser vendors & versions, you may want to override the `Intl` object with the polyfill to improve consistency.
+
+```js
+/* <project-root>/config/ember-intl.js */
+module.exports = function(/* env */) {
+  locales: ['en-us'],
+  forcePolyfill: true, /* adds Intl.min and en-us locale data script tags to index.html head */
+  autoPolyfill: {
+    vendor: true
+  }
+};
+```
+
+## Manually assign Intl polyfill & data
 
 Add the following tags to your `index.html`, or any mechanism in which you serve
 your your application payload.  Note: these script tags should be set above
