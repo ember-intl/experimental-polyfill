@@ -50,7 +50,7 @@ module.exports = function(/* env */) {
 };
 ```
 
-## Vendor polyfill into vendor.js
+## Vendor/bundle Intl polyfill
 
 ```js
 /* <project-root>/config/ember-intl.js */
