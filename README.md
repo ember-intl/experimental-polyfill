@@ -17,7 +17,7 @@ Using the polyfill is not required when targeting a modern set of browsers which
 
 Locales that your application supports i.e., `['en-us', 'fr-fr', 'en-ca']`
 
-* `autoPolyfill` (default: `Object`)
+* `autoPolyfill` {?Object}
   * `locales` {?Array} optional, signals which locales to insert into head or vendor.  If not provided, will default `config.locales`
   * `complete` {Boolean}: forces complete polyfill versus partial polyfill
   * `strategy` {Symbol from `@ember-intl/polyfill/lib/strategies`}
