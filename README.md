@@ -17,6 +17,15 @@ Using the polyfill is not required when targeting a modern set of browsers which
 
 Locales that your application supports i.e., `['en-us', 'fr-fr', 'en-ca']`
 
+* `forcePolyfill` *Boolean*
+
+Overrides `global.Intl.{NumberFormat,DateTimeFormat}` with `IntlPolyfill.{NumberFormat,DateTimeFormat}`
+NOTE: if you are not vendoring the Intl polyfill, you must ensure the Intl polyfill is loaded before the `vendor.js` script tag.
+
+* `disablePolyfill` *Boolean*
+
+Disables the addon.
+
 * `autoPolyfill` *?Object*
   * `locales` *?Array*
   Signals which locales to insert into head or vendor.  If not provided, will default `config.locales`
@@ -27,15 +36,6 @@ Locales that your application supports i.e., `['en-us', 'fr-fr', 'en-ca']`
   * `strategy` *Symbol* from `@ember-intl/polyfill/lib/strategies`
     * `SCRIPT_TAGS` includes necessary `script` tags into the head of index.html
     * `VENDOR` bundles polyfill within vendor.js
-
-* `forcePolyfill` *Boolean*
-
-Overrides `global.Intl.{NumberFormat,DateTimeFormat}` with `IntlPolyfill.{NumberFormat,DateTimeFormat}`
-NOTE: if you are not vendoring the Intl polyfill, you must ensure the Intl polyfill is loaded before the `vendor.js` script tag.
-
-* `disablePolyfill` *Boolean*
-
-Disables the addon.
 
 ### Change asset output path
 
