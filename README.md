@@ -13,19 +13,25 @@ Using the polyfill is not required when targeting a modern set of browsers which
 * Edit `<project-root>/config/ember-intl.js`
 
 ## Options
-* `autoPolyfill` (default: `false`)
-  * automatically includes javascript `script` tags into the head of index.html
-  * optionally supports vendoring/bundling the Intl Polyfill and certain Intl Polyfill locale-data within vendor.js.  [Instructions](https://github.com/ember-intl/polyfill/blob/master/README.md#vendorbundle-intl-polyfill)
+* `locales` {Array}
 
-* `forcePolyfill` (default: `false`)
-overrides `global.Intl.{NumberFormat,DateTimeFormat}` with `IntlPolyfill.{NumberFormat,DateTimeFormat}`
+Locales that your application supports i.e., `['en-us', 'fr-fr', 'en-ca']`
+
+* `autoPolyfill` (default: `Object`)
+  * `locales` {?Array} optional, signals which locales to insert into head or vendor.  If not provided, will default `config.locales`
+  * `complete` {Boolean}: forces complete polyfill versus partial polyfill
+  * `strategy` {Symbol exported from `@ember-intl/polyfill/lib/strategies')`
+    * `SCRIPT_TAGS` includes javascript `script` tags into the head of index.html
+    * `VENDOR` bundles the Intl Polyfill and locale-data within vendor.js
+
+* `forcePolyfill` {Boolean}
+
+Overrides `global.Intl.{NumberFormat,DateTimeFormat}` with `IntlPolyfill.{NumberFormat,DateTimeFormat}`
 NOTE: if you are not vendoring the Intl polyfill, you must ensure the Intl polyfill is loaded before the `vendor.js` script tag.
 
-* `disablePolyfill` (default: `false`)
-disables addon
+* `disablePolyfill` {Boolean}
 
-* `locales` (default: `[]`)
-locales that your application supports i.e., `['en-us', 'fr-fr', 'en-ca']`
+Disables the addon.
 
 ### Change asset output path
 
@@ -40,52 +46,68 @@ let app = new EmberApp({
 module.exports = app;
 ```
 
-## Automatically inject script tags
+## Insert script tags
 
 ```js
 /* <project-root>/config/ember-intl.js */
+
+const { SCRIPT_TAGS } = require('@ember-intl/polyfill/lib/strategies');
+
 module.exports = function(/* env */) {
   locales: ['en-us'],
-  autoPolyfill: true /* adds Intl.min and en-us locale data script tags to index.html head */
+  autoPolyfill: {
+    /* adds Intl.min and en-us locale data script tags within index.html's head */
+    strategy: SCRIPT_TAGS
+  }
 };
 ```
 
 ## Vendor/bundle Intl polyfill
 
+### Vendor Partial Intl Polyfill
+
 ```js
 /* <project-root>/config/ember-intl.js */
+
+const { VENDOR } = require('@ember-intl/polyfill/lib/strategies');
+
 module.exports = function(/* env */) {
-  locales: ['en-us'],
+  locales: ['en-us', 'fr-fr'],
   autoPolyfill: {
-    vendor: true,
-    complete: true /* vendors *complete* Intl polyfill */
+    /* vendors Intl polyfill without locale data */
+    strategy: VENDOR,
+    /* vendors only en-us.  If `autoPolyfill.locales` is not set, it will use `config.locales` (en-us, fr-fr) */
+    locales: ['en-us']
   }
 };
 ```
 
+### Vendor Complete Polyfill
+
 ```js
 /* <project-root>/config/ember-intl.js */
+
+const { VENDOR } = require('@ember-intl/polyfill/lib/strategies');
+
 module.exports = function(/* env */) {
   locales: ['en-us'],
   autoPolyfill: {
-    vendor: true, /* vendors Intl polyfill without locale data */
-    locales: ['en-us'] /* vendors only en-us locale */
+    strategy: VENDOR,
+    /* vendors *complete* Intl polyfill */
+    complete: true
   }
 };
 ```
 
 ## Force polyfill
 
-Since locale-data can vary between browser vendors & versions, you may want to override the `global.Intl` object with the polyfill to improve consistency.  This replaces the `global.Intl.{DateTimeFormat,NumberFormat}` constructors with `global.IntlPolyfill.{DateTimeFormat,NumberFormat}`
+Since locale-data can vary between browser vendors & versions, you may want to override the `global.Intl` object with the polyfill to improve consistency.  This replaces the `global.Intl.{DateTimeFormat,NumberFormat}` constructors with `global.IntlPolyfill.{DateTimeFormat,NumberFormat}`.
 
 ```js
 /* <project-root>/config/ember-intl.js */
 module.exports = function(/* env */) {
   locales: ['en-us'],
-  forcePolyfill: true,
-  autoPolyfill: {
-    vendor: true
-  }
+  forcePolyfill: true
 };
 ```
 

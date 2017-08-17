@@ -8,7 +8,10 @@ const existsSync = require('exists-sync');
 const mergeTrees = require('broccoli-merge-trees');
 const lowercaseTree = require('./lib/lowercase-tree');
 const debug = require('debug')('@ember-intl/polyfill');
+const { VENDOR, SCRIPT_TAGS } = require('./lib/strategies');
 const UnwatchedDir = require('broccoli-source').UnwatchedDir;
+
+const isArray = Array.isArray;
 
 module.exports = {
   name: '@ember-intl/polyfill',
@@ -35,15 +38,14 @@ module.exports = {
     if (existsSync(configPath)) {
       config = Object.assign({}, require(configPath)(env));
 
-      if (Array.isArray(config.locales)) {
+      if (isArray(config.locales)) {
         config.locales = config.locales.map(this.normalizeLocale, this);
       }
 
-      if (Array.isArray(get(config, 'autoPolyfill.locales'))) {
+      if (isArray(get(config, 'autoPolyfill.locales'))) {
         config.autoPolyfill.locales = config.autoPolyfill.locales.map(this.normalizeLocale, this);
       }
     }
-
 
     let optionalAssetPath = get(this, 'app.options.app.intl');
     if (optionalAssetPath) {
@@ -51,9 +53,10 @@ module.exports = {
     }
 
     return Object.assign({
+      autoPolyfill: false,
       disablePolyfill: false,
       assetPath: 'assets/intl',
-      locales: []
+      locales: [],
     }, config);
   },
 
@@ -63,11 +66,10 @@ module.exports = {
 
   contentFor(name, config) {
     let addonConfig = this._addonConfig;
-    let autoPolyfill = addonConfig.autoPolyfill;
-
     if (name === 'head' && !addonConfig.disablePolyfill) {
-      if (autoPolyfill === true || (typeof autoPolyfill === 'object' && !get(autoPolyfill, 'vendor'))) {
-        let locales = get(autoPolyfill, 'locales') || get(addonConfig, 'locales');
+      let autoPolyfill = addonConfig.autoPolyfill;
+
+      if (autoPolyfill === true || (typeof autoPolyfill === 'object' && get(autoPolyfill, 'strategy') === SCRIPT_TAGS)) {
         let prefix = '';
 
         if (config.rootURL) {
@@ -78,24 +80,28 @@ module.exports = {
           prefix += addonConfig.assetPath;
         }
 
-        if ((locales && locales.length) && !get(autoPolyfill, 'complete')) {
+        if (autoPolyfill.complete) {
+          return `<script src="${prefix}/intl.complete.js"></script>`;
+        }
+
+        let locales = get(autoPolyfill, 'locales') || get(addonConfig, 'locales') || [];
+
+        if (locales.length > 0) {
           debug(`inserting ${locales.join(',')}`);
-          let scripts = addonConfig.locales.map(locale => `<script src="${prefix}/locales/${locale}.js"></script>`);
+          let scripts = locales.map(locale => `<script src="${prefix}/locales/${locale}.js"></script>`);
 
           return [`<script src="${prefix}/intl.min.js"></script>`].concat(scripts).join('\n');
-        } else {
-          return `<script src="${prefix}/intl.complete.js"></script>`;
         }
       }
     }
   },
 
-  intlRelativeToProject(project) {
+  intlRelativeToProject(basedir) {
     try {
       /* project with intl as a dependency takes priority */
       let resolve = require('resolve');
 
-      return path.dirname(resolve.sync('intl', { basedir: project }));
+      return path.dirname(resolve.sync('intl', { basedir: basedir }));
     } catch(_) {
       try {
         return path.dirname(require.resolve('intl'));
@@ -119,7 +125,7 @@ module.exports = {
 
     let locales = get(addonConfig, 'autoPolyfill.locales');
 
-    if (get(addonConfig, 'autoPolyfill.vendor')) {
+    if (get(addonConfig, 'autoPolyfill.strategy') === VENDOR) {
       /* TODO: maybe import complete if `locales` is not set and throw a warning to explicitly set `complete: true` to silence? */
       if (get(addonConfig, 'autoPolyfill.complete')) {
         this.appImport(app, 'vendor/intl/intl.complete.js');

@@ -1,39 +1,59 @@
 /* eslint-env node */
 
+const { /* VENDOR, */ SCRIPT_TAGS } = require('@ember-intl/polyfill/lib/strategies');
+
 module.exports = function(/* env */) {
   return {
     /**
-    * The locales that are application supports.
-    *
-    * This is optional and is automatically set if project stores translations
-    * where ember-intl is able to look them up (<project root>/translations/).
-    *
-    * If the project relies on side-loading translations, then you must explicitly
-    * list out the locales. i.e: ['en-us', 'en-gb', 'fr-fr']
+    * Collection of locales that the application supportss
     *
     * @property locales
     * @type {Array}
-    * @default "[]"
     */
-    locales: [],
+    locales: ['en-us'],
 
     /**
-    * autoPolyfill, when true will automatically inject the IntlJS polyfill
-    * into index.html
+    * Force global.IntlPolyfill to overwrites global.Intl
     *
-    * @property autoPolyfill
+    * @property forcePolyfill
     * @type {Boolean}
-    * @default "false"
     */
-    autoPolyfill: false,
+    forcePolyfill: false,
 
     /**
     * disablePolyfill prevents the polyfill from being bundled in the asset folder of the build
     *
     * @property disablePolyfill
     * @type {Boolean}
-    * @default "false"
     */
-    disablePolyfill: false
+    disablePolyfill: false,
+
+    /**
+    * Configure a strategy for loading the polyfill into your application
+    *
+    * @property autoPolyfill
+    * @type {Object}
+    */
+    autoPolyfill: {
+      /**
+      * Supported strategies:
+      * SCRIPT_TAGS -> inserts script tags into index.html
+      * VENDOR -> bundles polyfill into vendor.js
+      */
+      strategy: SCRIPT_TAGS,
+
+      /* Bundles the complete polyfill instead of the default partial polyfill */
+      complete: false,
+
+      /**
+       * If provided, will use this collection of locales within the strategy.
+       * Useful if you want to vendor/insert script tags for a subset of the locales
+       * defined in `config.locales` above.
+       *
+       * @property locales
+       * @type {?Array}
+       */
+      locales: null
+    }
   };
 };

@@ -1,5 +1,7 @@
 /* eslint-env node */
 
+const { VENDOR } = require('../../../lib/strategies');
+
 module.exports = function(/* env */) {
   return {
     /**
@@ -26,7 +28,7 @@ module.exports = function(/* env */) {
     * @default false
     */
     autoPolyfill: {
-       vendor: true
+      strategy: VENDOR
     },
 
     /**
