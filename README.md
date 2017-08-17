@@ -21,8 +21,8 @@ Locales that your application supports i.e., `['en-us', 'fr-fr', 'en-ca']`
   * `locales` {?Array} optional, signals which locales to insert into head or vendor.  If not provided, will default `config.locales`
   * `complete` {Boolean}: forces complete polyfill versus partial polyfill
   * `strategy` {Symbol from `@ember-intl/polyfill/lib/strategies`}
-    * `SCRIPT_TAGS` includes javascript `script` tags into the head of index.html
-    * `VENDOR` bundles the Intl Polyfill and locale-data within vendor.js
+    * `SCRIPT_TAGS` includes necessary `script` tags into the head of index.html
+    * `VENDOR` bundles polyfill within vendor.js
 
 * `forcePolyfill` {Boolean}
 
