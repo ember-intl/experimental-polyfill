@@ -55,8 +55,8 @@ describe('autopolyfill/vendor-min-cherrypick-locales acceptance', function() {
       expect(res.statusCode).to.equal(200);
       expect(res.body.includes(polyfill)).to.equal(true);
       expect(res.body.includes(data.fr_fr)).to.equal(true);
+      expect(res.body.includes(data.en_ca)).to.equal(true);
       expect(res.body.includes(data.en_us)).to.equal(false);
-      expect(res.body.includes(data.en_ca)).to.equal(false);
     });
   });
 });

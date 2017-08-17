@@ -13,7 +13,7 @@ module.exports = function(/* env */) {
     */
     autoPolyfill: {
       vendor: true,
-      locales: ['fr-fr'] /* vendor only fr-fr, all-else written to /assets */
+      locales: ['fr-fr', 'en_CA'] /* vendor only fr-fr, all-else written to /assets */
     }
   };
 };

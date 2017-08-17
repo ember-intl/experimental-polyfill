@@ -33,14 +33,17 @@ module.exports = {
     let config = {};
 
     if (existsSync(configPath)) {
-      config = require(configPath)(env);
+      config = Object.assign({}, require(configPath)(env));
 
       if (Array.isArray(config.locales)) {
-        config.locales = config.locales
-          .filter(locale => typeof locale === 'string')
-          .map(locale => locale.toLowerCase().replace(/\_/g, '-'));
+        config.locales = config.locales.map(this.normalizeLocale, this);
+      }
+
+      if (Array.isArray(get(config, 'autoPolyfill.locales'))) {
+        config.autoPolyfill.locales = config.autoPolyfill.locales.map(this.normalizeLocale, this);
       }
     }
+
 
     let optionalAssetPath = get(this, 'app.options.app.intl');
     if (optionalAssetPath) {
@@ -52,6 +55,10 @@ module.exports = {
       assetPath: 'assets/intl',
       locales: []
     }, config);
+  },
+
+  normalizeLocale(localeName) {
+    return localeName.toLowerCase().replace(/\_/g, '-');
   },
 
   contentFor(name, config) {
