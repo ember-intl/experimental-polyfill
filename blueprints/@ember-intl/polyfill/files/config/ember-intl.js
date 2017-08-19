@@ -5,7 +5,7 @@ const { /* VENDOR, */ SCRIPT_TAGS } = require('@ember-intl/polyfill/lib/strategi
 module.exports = function(/* env */) {
   return {
     /**
-    * Collection of locales that the application supportss
+    * Collection of locales that the application supports
     *
     * @property locales
     * @type {Array}
