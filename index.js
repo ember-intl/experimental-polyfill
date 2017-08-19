@@ -17,18 +17,21 @@ module.exports = {
   name: '@ember-intl/polyfill',
   intlPlugin: true,
   _isHost: false,
+  addonConfig: null,
 
   included(app) {
     this._super.included.apply(this, arguments);
+
     let host = (this.app = this._findHost());
     this._isHost = app === host;
-    this._addonConfig = this.getConfig(host.env);
+    this.addonConfig = Object.assign({}, this.getConfig(host.env), this.addonConfig);
     this._nodeModulePath = this.intlRelativeToProject(this.app.project.root);
     this.importPolyfill(this.app);
   },
 
-  onRegisterPlugin(parentOptions = {}) {
-    Object.assign(this._addonConfig, parentOptions);
+  /* NOTE: initializePlugin will get called before `included` when consumed as a plugin */
+  initializePlugin(parentOptions = {}) {
+    this.addonConfig = Object.assign({}, this.addonConfig, parentOptions);
   },
 
   getConfig(env) {
@@ -65,7 +68,7 @@ module.exports = {
   },
 
   contentFor(name, config) {
-    let addonConfig = this._addonConfig;
+    let addonConfig = this.addonConfig;
     if (name === 'head' && !addonConfig.disablePolyfill) {
       let autoPolyfill = addonConfig.autoPolyfill;
 
@@ -85,7 +88,6 @@ module.exports = {
         }
 
         let locales = get(autoPolyfill, 'locales') || get(addonConfig, 'locales') || [];
-
         if (locales.length > 0) {
           debug(`inserting ${locales.join(',')}`);
           let scripts = locales.map(locale => `<script src="${prefix}/locales/${locale}.js"></script>`);
@@ -117,34 +119,29 @@ module.exports = {
   },
 
   importPolyfill(app) {
-    let addonConfig = this._addonConfig;
+    let addonConfig = this.addonConfig;
 
     if (addonConfig.disablePolyfill) {
       return;
     }
 
-    let locales = get(addonConfig, 'autoPolyfill.locales');
-
     if (get(addonConfig, 'autoPolyfill.strategy') === VENDOR) {
-      /* TODO: maybe import complete if `locales` is not set and throw a warning to explicitly set `complete: true` to silence? */
+      let locales = get(addonConfig, 'autoPolyfill.locales');
+      if (!locales || (locales && locales.length === 0)) {
+        locales = get(addonConfig, 'locales') || [];
+      }
+
       if (get(addonConfig, 'autoPolyfill.complete')) {
         this.appImport(app, 'vendor/intl/intl.complete.js');
-
-        if (locales && locales.length) {
-          this.ui.writeLine('@ember-intl/polyfill: when autoPolyfill.complete = true specificying individual locales is unncessary as all Intl locales are bundled.')
-          this.ui.writeLine('To silence this error, remove `autoPolyfill.locales` or remove `autoPolyfill.complete`.');
-        }
+      }
+      else if (typeof get(addonConfig, 'autoPolyfill.complete') === 'undefined' && locales.length === 0) {
+        this.ui.writeLine('@ember-intl/polyfill: no locales were provided or discovered. Defaulting to the complete locale dataset for Intl polyfill.');
+        this.ui.writeLine('To silence this error, either set `autoPolyfill.complete = true` or specify `locales` within config/ember-intl.config');
+        this.appImport(app, 'vendor/intl/intl.complete.js');
       }
       else {
         this.appImport(app, 'vendor/intl/intl.min.js');
-
-        if (!locales || (!locales && locales.length)) {
-          locales = get(addonConfig, 'locales');
-        }
-
-        if (locales && locales.length) {
-          locales.forEach(locale => this.appImport(app, `vendor/intl/locales/${locale}.js`));
-        }
+        locales.forEach(locale => this.appImport(app, `vendor/intl/locales/${locale}.js`));
       }
     }
 
@@ -158,8 +155,9 @@ module.exports = {
     app.import(filename, options);
   },
 
-  createAddonTree() {
-    let addonConfig = this._addonConfig;
+  createPolyfillTree() {
+    let addonConfig = this.addonConfig;
+    let locales = this.addonConfig.locales || [];
     let tree = new UnwatchedDir(this._nodeModulePath);
     let trees = [];
 
@@ -180,7 +178,8 @@ module.exports = {
       destDir: `/locales`
     };
 
-    if (get(this, '_addonConfig.locales.length') > 0) {
+    /* if empty, all locales are included within the tree */
+    if (locales.length > 0) {
       localeFunnel.include = addonConfig.locales.map(locale => new RegExp(`^${locale}.js$`, 'i'));
     }
 
@@ -191,36 +190,32 @@ module.exports = {
   },
 
   treeForVendor(tree) {
-    let addonConfig = this._addonConfig;
-
-    if (addonConfig.disablePolyfill) {
+    if (this.addonConfig.disablePolyfill) {
       return;
     }
 
     let trees = [];
 
-    if (tree && addonConfig.forcePolyfill) {
+    if (tree && this.addonConfig.forcePolyfill) {
       trees.push(tree);
     }
 
-    trees.push(funnel(this.createAddonTree(), {
+    trees.push(funnel(this.createPolyfillTree(), {
       destDir: 'intl'
     }));
 
-    return mergeTrees(trees, { overwrite: true });
+    return mergeTrees(trees);
   },
 
   treeForPublic() {
-    let addonConfig = this._addonConfig;
-
-    if (addonConfig.disablePolyfill) {
+    if (this.addonConfig.disablePolyfill) {
       return;
     }
 
-    let tree = this.createAddonTree();
+    let tree = this.createPolyfillTree();
 
     return funnel(tree, {
-      destDir: addonConfig.assetPath
+      destDir: this.addonConfig.assetPath
     });
   }
 };
