@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-const { /* VENDOR, */ SCRIPT_TAGS } = require('@ember-intl/polyfill/lib/strategies');
+const { VENDOR, /* SCRIPT_TAGS */ } = require('@ember-intl/polyfill/lib/strategies');
 
 module.exports = function(/* env */) {
   return {
@@ -40,7 +40,7 @@ module.exports = function(/* env */) {
       * SCRIPT_TAGS -> inserts script tags into index.html
       * VENDOR -> bundles polyfill into vendor.js
       */
-      strategy: SCRIPT_TAGS,
+      strategy: VENDOR,
 
       /* Bundles the complete polyfill instead of the default partial polyfill */
       complete: false,
@@ -53,7 +53,7 @@ module.exports = function(/* env */) {
        * @property locales
        * @type {?Array}
        */
-      locales: null
+      // locales: ['en-us']
     }
   };
 };
