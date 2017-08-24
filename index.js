@@ -8,30 +8,31 @@ const existsSync = require('exists-sync');
 const mergeTrees = require('broccoli-merge-trees');
 const lowercaseTree = require('./lib/lowercase-tree');
 const debug = require('debug')('@ember-intl/polyfill');
-const { VENDOR, SCRIPT_TAGS } = require('./lib/strategies');
+const strategies = require('./lib/strategies');
 const UnwatchedDir = require('broccoli-source').UnwatchedDir;
 
 const isArray = Array.isArray;
+const assign = Object.assign;
+const VENDOR = strategies.VENDOR;
+const SCRIPT_TAGS = strategies.SCRIPT_TAGS;
 
 module.exports = {
   name: '@ember-intl/polyfill',
   intlPlugin: true,
-  _isHost: false,
   addonConfig: null,
 
-  included(app) {
+  included() {
     this._super.included.apply(this, arguments);
 
     let host = (this.app = this._findHost());
-    this._isHost = app === host;
-    this.addonConfig = Object.assign({}, this.getConfig(host.env), this.addonConfig);
-    this._nodeModulePath = this.intlRelativeToProject(this.app.project.root);
+    this.addonConfig = assign({}, this.getConfig(host.env), this.addonConfig);
+    this._nodeModulePath = this.intlRelativeToProject(this.project.root);
     this.importPolyfill(this.app);
   },
 
   /* NOTE: initializePlugin will get called before `included` when consumed as a plugin */
-  initializePlugin(parentOptions = {}) {
-    this.addonConfig = Object.assign({}, this.addonConfig, parentOptions);
+  initializePlugin(parentOptions) {
+    this.addonConfig = assign({}, this.addonConfig, parentOptions);
   },
 
   getConfig(env) {
@@ -39,7 +40,7 @@ module.exports = {
     let config = {};
 
     if (existsSync(configPath)) {
-      config = Object.assign({}, require(configPath)(env));
+      config = assign({}, require(configPath)(env));
 
       if (isArray(config.locales)) {
         config.locales = config.locales.map(this.normalizeLocale, this);
@@ -55,7 +56,7 @@ module.exports = {
       config.assetPath = optionalAssetPath;
     }
 
-    return Object.assign({
+    return assign({
       autoPolyfill: false,
       disablePolyfill: false,
       assetPath: 'assets/intl',
