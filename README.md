@@ -3,9 +3,9 @@
 [![npm Version][npm-badge]][npm]
 [![Build Status][travis-badge]][travis]
 
-Automatically writes the [Intl.js polyfill](https://github.com/andyearnshaw/Intl.js/) to `assets/intl/` and optionally will insert script polyfill script tags into `index.html` at build time.
+@ember-intl/polyfill automatically writes the [Intl.js polyfill](https://github.com/andyearnshaw/Intl.js/) to `assets/intl/` and optionally will insert necessary script tags into the `<head>` of `index.html` at build time.
 
-Using the polyfill is not required when targeting a modern set of browsers which natively implement the Intl API.
+Using the polyfill is not required when targeting modern browsers but sometimes useful when you want to guarantee consistent output of Intl across all browsers.
 
 ## Configure
 
