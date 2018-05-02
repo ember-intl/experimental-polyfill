@@ -66,9 +66,9 @@ module.exports = function(/* env */) {
 };
 ```
 
-## Vendor/bundle Intl polyfill
+## Bundle Intl polyfill
 
-### Vendor Partial Intl Polyfill
+### Bundle Partial Intl Polyfill
 
 ```js
 /* <project-root>/config/ember-intl.js */
@@ -86,7 +86,7 @@ module.exports = function(/* env */) {
 };
 ```
 
-### Vendor Complete Polyfill
+### Bundle Complete Polyfill
 
 ```js
 /* <project-root>/config/ember-intl.js */
